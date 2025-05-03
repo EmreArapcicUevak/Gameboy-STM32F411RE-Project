@@ -3,6 +3,7 @@
 #include "my_wait.h"
 #include <Display.h>
 #include <Speaker.h>
+#include <SD_Card.h>
 
 // Built-in LED PA5
 int main(){
@@ -10,14 +11,15 @@ int main(){
   init_wait_timer();
   init_display();
   init_speaker();
+  init_SD_Card();
 
   RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
   GPIOA->MODER |= (0b01 << GPIO_MODER_MODER5_Pos); // Set PA5 as output
 
   uart2_println("Programm started");
   write_command(0x29);
-  set_column_address(0,239); 
-  set_page_address(0,319);
+  // 240 x 320
+  set_address_window(0,0,239, 319);
   start_memory_write();
 
   for (unsigned int i = 0; i < 240*320; i++)

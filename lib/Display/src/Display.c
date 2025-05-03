@@ -81,6 +81,9 @@ void init_display(void) {
   send_data(0x4D); send_data(0x05); send_data(0x18); send_data(0x0D);
   send_data(0x38); send_data(0x3A); send_data(0x1F);
 
+  write_command(0x36); // Memmory Access Controll
+  send_data(0b10001000);
+
   write_command(0x11); // Sleep OUT
   wait(100);
 
