@@ -33,12 +33,16 @@ uint16_t read_battery_ADC(void) {
     return *(uint16_t *)(DMA2_Stream0->M1AR);
 }
 
+float get_battery_voltage(void) {
+  return ((float)read_battery_ADC() / 4095.0f) * 3.3;
+}
+
 void DMA2_Stream0_IRQHandler(void) {
   if (DMA2->LISR & DMA_LISR_TCIF0_Msk){
     DMA2->LIFCR |= DMA_LIFCR_CTCIF0;
-    uart2_println("Battery ADC value is:");
-    uart2_send_bin_num(read_battery_ADC, 16);
-    uart2_println("");
+    //uart2_println("Battery ADC value is:");
+    //uart2_send_bin_num(read_battery_ADC, 16);
+    //uart2_println("");
   }
 
   // More code here
