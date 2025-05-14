@@ -1,6 +1,8 @@
 #ifndef ComputerUART
 #define ComputerUART
 
+#define MAX_BINARY_BITS 32
+
 #include "stm32f411xe.h"
 
 void uart2_init(uint32_t baud_rate) {
@@ -39,6 +41,7 @@ void uint32_to_binary_str(uint32_t value, char *buffer, uint8_t bits) {
 }
 
 void uart2_send_bin_num(uint32_t number, uint8_t bits){
+  if (bits > MAX_BINARY_BITS) bits = MAX_BINARY_BITS; // safety cap
   char buffer[bits + 1];
   uint32_to_binary_str(number, buffer, bits);
   uart2_send_string(buffer);
