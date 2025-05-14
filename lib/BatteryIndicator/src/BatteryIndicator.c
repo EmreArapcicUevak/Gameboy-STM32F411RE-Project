@@ -25,13 +25,15 @@ void initilize_battery_indicator(void) {
   TIM4->CR1 |= TIM_CR1_CEN; // Turn on the timer
 }
 
-void set_battery_indicator_color(const uint8_t red, const uint8_t green, const uint8_t blue) {
-  TIM4->CCER &= ~(TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E); // disalbe CC1,2,3
-  
-  TIM4->CCR1 = 1000 * red / 255;
-  TIM4->CCR2 = 1000 * green / 255;
-  TIM4->CCR3 = 1000 * blue / 255;
+void set_battery_indicator_color_rgb(const uint8_t red, const uint8_t green, const uint8_t blue) {
+  const double ARR = TIM4->ARR + 1;
+  TIM4->CCR1 = ARR * red / 255;
+  TIM4->CCR2 = ARR * green / 255;
+  TIM4->CCR3 = ARR * blue / 255;
 
   TIM4->EGR |= TIM_EGR_UG; // Generate an update event just in case to reset the timer of previous settings
-  TIM4->CCER |= TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E; // enable CC1,2,3
+}
+
+void set_battery_indicator_color(const Color color) {
+  set_battery_indicator_color_rgb(color.red, color.green, color.blue);
 }
