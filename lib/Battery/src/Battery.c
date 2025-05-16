@@ -3,6 +3,7 @@
 
 // PA0 is our ADC input ADC1_0
 void init_battery_ADC(uint16_t *ADCAddress, uint16_t *backupAddress) {
+  init_display();
   RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
   RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
   RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_DMA2EN;
@@ -58,16 +59,34 @@ float get_battery_voltage(void) {
 #include <stdint.h>
 
 
+// 320 x 240
+
+#define FrameWidth 42
+#define BatteryStartX 320 - FrameWidth - 20 + 1
+#define BatteryEndX 320 - 21
+#define BatteryFrameStartY 5
+#define BatteryFrameEndY 5 + 20
+
+
 void DMA2_Stream0_IRQHandler(void) {
   if (DMA2->LISR & DMA_LISR_TCIF0_Msk){
     float voltage = get_battery_voltage(); // Convert to volts
+    float voltagePerc = (voltage - 2.125) / (2.55 - 2.125);
 
-    uint32_t whole = (uint32_t)voltage;              // Integer part
-    uint32_t fraction = (uint32_t)((voltage - whole) * 1000); // Decimal part
+    // battery frame width is 42, height 20
+    set_address_window(320-42-20,5,320-20, 5 + 20);
+    start_memory_write();
 
-    char buffer[32];
-    snprintf(buffer, sizeof(buffer), "Voltage: %lu.%03luV", whole, fraction);
-    uart2_println(buffer);
+    for (unsigned int i = 0; i < 43*21; i++)
+      send_multiple_data((uint8_t []) {0x00, 0x00}, 2);
+
+    uint8_t batteryWidth = (float)(FrameWidth - 2) * voltagePerc; 
+    set_address_window(BatteryStartX, BatteryFrameStartY + 1, BatteryStartX + batteryWidth, BatteryFrameEndY - 1);
+    start_memory_write();
+
+    for (unsigned int i = 0; i < batteryWidth * 20; i++)
+      send_multiple_data((uint8_t []) {0x07, 0xE0}, 2);
+
     DMA2->LIFCR |= DMA_LIFCR_CTCIF0;
   }
 
