@@ -5,7 +5,7 @@
 
 #include "stm32f411xe.h"
 
-void uart2_init(uint32_t baud_rate) {
+static void uart2_init(uint32_t baud_rate) {
   RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
   RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
 
@@ -22,32 +22,32 @@ void uart2_init(uint32_t baud_rate) {
   USART2->CR1 |= USART_CR1_UE;                 // Enable USART
 }
 
-void uart2_send_char(char c) {
+static void uart2_send_char(char c) {
   while (!(USART2->SR & USART_SR_TXE));
   USART2->DR = c;
 }
 
-void uart2_send_string(const char *s) {
+static void uart2_send_string(const char *s) {
   while (*s) {
       uart2_send_char(*s++);
   }
 }
 
-void uint32_to_binary_str(uint32_t value, char *buffer, uint8_t bits) {
+static void uint32_to_binary_str(uint32_t value, char *buffer, uint8_t bits) {
   for (int i = bits - 1; i >= 0; i--) {
       *buffer++ = (value & (1 << i)) ? '1' : '0';
   }
   *buffer = '\0'; // Null terminator
 }
 
-void uart2_send_bin_num(uint32_t number, uint8_t bits){
+static void uart2_send_bin_num(uint32_t number, uint8_t bits){
   if (bits > MAX_BINARY_BITS) bits = MAX_BINARY_BITS; // safety cap
   char buffer[bits + 1];
   uint32_to_binary_str(number, buffer, bits);
   uart2_send_string(buffer);
 }
 
-void uart2_println(const char *s) {
+static void uart2_println(const char *s) {
   uart2_send_string(s);
   uart2_send_string("\n\r");
 }
