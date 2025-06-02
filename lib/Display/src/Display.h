@@ -2,6 +2,7 @@
 #define my_Display_ILI9341
 
 #include "stm32f411xe.h"
+#include "ComputerUART.h"
 
 void init_display(void); // Initilize pins for the display
 void write_command(uint8_t command); // Writes a command to the display
