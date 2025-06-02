@@ -2,7 +2,14 @@
 #define BUTTONS_H
 
 #include "stm32f411xe.h"
-
+#include "ButtonA.h"
+#include "ButtonB.h"
+#include "ButtonStart.h"
+#include "ButtonSelect.h"
+#include "ButtonRight.h"
+#include "ButtonUp.h"
+#include "ButtonDown.h"
+#include "ButtonLeft.h"
 // PA3 Button "A"
 // PA2 Button "B"
 // PC 15 Button "Start"
@@ -11,7 +18,7 @@
 // PC 12 Button "Up"
 // PC 11 Button "Down"  
 // PC 10 Button "Left"
-static void Button_init(void) { // call to init buttons
+static void init_buttons(void) { // call to init buttons
     // Enable GPIOA and GPIOC clocks
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOCEN;
     RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN; // Enable SYSCFG clock
@@ -41,10 +48,6 @@ static void Button_init(void) { // call to init buttons
                          (0b0010 << SYSCFG_EXTICR4_EXTI15_Pos);   // Set PC15 to EXTI15
 
       
-    NVIC_EnableIRQ(EXTI2_IRQn); // Enable EXTI2 interrupt
-    NVIC_EnableIRQ(EXTI3_IRQn); // Enable EXTI3 interrupt
-    NVIC_EnableIRQ(EXTI15_10_IRQn); // Enable EXTI10 interrupt
-
     EXTI->IMR |= (EXTI_IMR_MR2 | EXTI_IMR_MR3 | EXTI_IMR_MR10 | 
                         EXTI_IMR_MR11 | EXTI_IMR_MR12 | 
                         EXTI_IMR_MR13 | EXTI_IMR_MR14 | 
@@ -54,5 +57,57 @@ static void Button_init(void) { // call to init buttons
                         EXTI_FTSR_TR10 | EXTI_FTSR_TR11 | 
                         EXTI_FTSR_TR12 | EXTI_FTSR_TR13 | 
                         EXTI_FTSR_TR14 | EXTI_FTSR_TR15); // Falling edge trigger for PA2, PA3, PC10 to PC15
+
+    NVIC_EnableIRQ(EXTI2_IRQn); // Enable EXTI2 interrupt
+    NVIC_EnableIRQ(EXTI3_IRQn); // Enable EXTI3 interrupt
+    NVIC_EnableIRQ(EXTI15_10_IRQn); // Enable EXTI10 interrupt
+}
+
+void EXTI2_IRQHandler(void) {
+    if (EXTI->PR & EXTI_PR_PR2) { // Check if EXTI2 triggered
+        ButtonA_triggered(); // Call Button A handler
+        EXTI->PR |= EXTI_PR_PR2; // Clear pending bit
+    }
+}
+
+void EXTI3_IRQHandler(void) {
+    uart2_println("EXTI3 IRQ Handler called"); // Debug print
+    if (EXTI->PR & EXTI_PR_PR3) { // Check if EXTI3 triggered
+        ButtonB_triggered(); // Call Button B handler
+        EXTI->PR |= EXTI_PR_PR3; // Clear pending bit
+    }
+}
+
+void EXTI15_10_IRQHandler(void) {
+    uart2_println("EXTI15_10 IRQ Handler called"); // Debug print
+    if (EXTI->PR & EXTI_PR_PR10) { // Check if EXTI10 triggered
+        ButtonLeft_triggered(); // Call Button Right handler
+        EXTI->PR |= EXTI_PR_PR10; // Clear pending bit
+    }
+
+    if (EXTI->PR & EXTI_PR_PR11) { // Check if EXTI11 triggered
+        ButtonDown_triggered(); // Call Button Up handler
+        EXTI->PR |= EXTI_PR_PR11; // Clear pending bit
+    }
+
+    if (EXTI->PR & EXTI_PR_PR12) { // Check if EXTI12 triggered
+        ButtonUp_triggered(); // Call Button Down handler
+        EXTI->PR |= EXTI_PR_PR12; // Clear pending bit
+    }
+
+    if (EXTI->PR & EXTI_PR_PR13) { // Check if EXTI13 triggered
+        ButtonRight_triggered(); // Call Button Left handler
+        EXTI->PR |= EXTI_PR_PR13; // Clear pending bit
+    }
+
+    if (EXTI->PR & EXTI_PR_PR14) { // Check if EXTI14 triggered
+        ButtonSelect_triggered(); // Call Button Select handler
+        EXTI->PR |= EXTI_PR_PR14; // Clear pending bit
+    }
+
+    if (EXTI->PR & EXTI_PR_PR15) { // Check if EXTI15 triggered
+        ButtonStart_triggered(); // Call Button Start handler
+        EXTI->PR |= EXTI_PR_PR15; // Clear pending bit
+    }
 }
 #endif
