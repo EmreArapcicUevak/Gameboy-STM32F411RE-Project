@@ -2,14 +2,7 @@
 #define BUTTONS_H
 
 #include "stm32f411xe.h"
-#include "ButtonA.h"
-#include "ButtonB.h"
-#include "ButtonStart.h"
-#include "ButtonSelect.h"
-#include "ButtonRight.h"
-#include "ButtonUp.h"
-#include "ButtonDown.h"
-#include "ButtonLeft.h"
+
 // PC 5 Button "A"
 // PA 6 Button "B"
 // PA 7 Button "Start"
@@ -68,50 +61,80 @@ static void init_buttons(void) { // call to init buttons
 }
 
 void EXTI3_IRQHandler(void) {
-    uart2_println("EXTI3 IRQ Handler called"); // Debug print
     if (EXTI->PR & EXTI_PR_PR3) { // Check if EXTI3 triggered
-        ButtonSelect_triggered(); // Call Button Select handler
+        if (GPIOB->IDR & GPIO_IDR_ID3) {
+          uart2_println("Button Select released");
+        }
+        else {
+          uart2_println("Button Select pressed");
+        }
         EXTI->PR |= EXTI_PR_PR3; // Clear pending bit
     }
 }
 
 void EXTI9_5_IRQHandler(void) {
-    uart2_println("EXTI9_5 IRQ Handler called"); // Debug print
     if (EXTI->PR & EXTI_PR_PR5) { // Check if EXTI5 triggered
-        ButtonA_triggered(); // Call Button A handler
+        if (GPIOC->IDR & GPIO_IDR_ID5) {
+          uart2_println("Button A released");
+        } else {
+          uart2_println("Button A pressed");
+        }
         EXTI->PR |= EXTI_PR_PR5; // Clear pending bit
     }
 
     if (EXTI->PR & EXTI_PR_PR6) { // Check if EXTI6 triggered
-        ButtonB_triggered(); // Call Button B handler
+        if (GPIOA->IDR & GPIO_IDR_ID6) {
+            uart2_println("Button B released");
+        } else {
+            uart2_println("Button B pressed");
+        }
         EXTI->PR |= EXTI_PR_PR6; // Clear pending bit
     }
 
     if (EXTI->PR & EXTI_PR_PR7) { // Check if EXTI7 triggered
-        ButtonStart_triggered(); // Call Button Start handler
+        if (GPIOA->IDR & GPIO_IDR_ID7) {
+            uart2_println("Button Start released");
+        } else {
+            uart2_println("Button Start pressed");
+        }
         EXTI->PR |= EXTI_PR_PR7; // Clear pending bit
     }
 }
 
 void EXTI15_10_IRQHandler(void) {
-    uart2_println("EXTI15_10 IRQ Handler called"); // Debug print
     if (EXTI->PR & EXTI_PR_PR10) { // Check if EXTI10 triggered
-        ButtonLeft_triggered(); // Call Button Left handler
+        if (GPIOC->IDR & GPIO_IDR_ID10) {
+            uart2_println("Button Left released");
+        } else {
+            uart2_println("Button Left pressed");
+        }
         EXTI->PR |= EXTI_PR_PR10; // Clear pending bit
     }
 
     if (EXTI->PR & EXTI_PR_PR11) { // Check if EXTI11 triggered
-        ButtonDown_triggered(); // Call Button Down handler
+        if (GPIOC->IDR & GPIO_IDR_ID11) {
+            uart2_println("Button Down released");
+        } else {
+            uart2_println("Button Down pressed");
+        }
         EXTI->PR |= EXTI_PR_PR11; // Clear pending bit
     }
 
     if (EXTI->PR & EXTI_PR_PR12) { // Check if EXTI12 triggered
-        ButtonUp_triggered(); // Call Button Up handler
+        if (GPIOC->IDR & GPIO_IDR_ID12) {
+            uart2_println("Button Up released");
+        } else {
+            uart2_println("Button Up pressed");
+        }
         EXTI->PR |= EXTI_PR_PR12; // Clear pending bit
     }
 
     if (EXTI->PR & EXTI_PR_PR13) { // Check if EXTI13 triggered
-        ButtonRight_triggered(); // Call Button Right handler
+        if (GPIOC->IDR & GPIO_IDR_ID13) {
+            uart2_println("Button Right released");
+        } else {
+            uart2_println("Button Right pressed");
+        }
         EXTI->PR |= EXTI_PR_PR13; // Clear pending bit
     }
 }
