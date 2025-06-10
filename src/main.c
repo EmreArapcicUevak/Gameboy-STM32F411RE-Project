@@ -17,8 +17,7 @@ int main(){
   init_wait_timer();
   init_display();
   init_speaker();
-  init_buttons();
-  /*
+  //init_buttons();
   SD_CardInfo SD_Card;
   if (init_SD_Card(&SD_Card) == SD_OK)
     uart2_println("SD card initilized successfully!");
@@ -42,12 +41,8 @@ int main(){
     default:
       uart2_println("Invalid");
   }
-  */
 
   init_battery_ADC(batteryValues, batteryValues + 1);
-
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-  GPIOA->MODER |= (0b01 << GPIO_MODER_MODER5_Pos); // Set PA5 as output
 
   write_command(0x29);
   // 320x240
@@ -72,7 +67,6 @@ int main(){
 
   uint8_t memBlock[512];
   // SD_WakeUp();
-  /*
   int response = SD_Read_Block(&SD_Card, memBlock, 0); // Read the 0th memory block
 
   if (response == SD_OK) {
@@ -88,10 +82,8 @@ int main(){
   } else {
     uart2_println("READ FAILED!");
   }
-  */
   uart2_println("Starting main loop");
   while (1) {
-    GPIOA->ODR ^= GPIO_ODR_OD5;        // Toggle LED on PA5
     //uart2_println("This is from the main loop");
     wait(500);
   }
