@@ -34,28 +34,31 @@ void lcd_draw_line(struct gb_s *gb, const uint8_t pixels[160],
   }
 }
 
+const uint8_t palette[4][2] = {
+    {0x08, 0x41},  // dark
+    {0x39, 0xE7},  // medium-dark
+    {0x84, 0x10},  // light
+    {0xFF, 0xFF}   // white
+};
+
+uint8_t line_buffer[LCD_WIDTH * 2];
+
 void display_buffer() {
-  set_address_window(50, 50, 50 + LCD_WIDTH, 50 + LCD_HEIGHT);
+  set_address_window(51, 51, 50 + LCD_WIDTH, 50 + LCD_HEIGHT);
   start_memory_write();
-  for (uint8_t i = 0; i < LCD_HEIGHT; i++)
-    for (uint8_t j = 0; j < LCD_WIDTH; j++) switch (framebuffer[i][j] & 0x3) {
-        case 0x0:
-          send_multiple_data((uint8_t[]){0x08, 0x41}, 2);
-          break;
-        case 0x1:
-          send_multiple_data((uint8_t[]){0x39, 0xE7}, 2);
-          break;
-        case 0x2:
-          send_multiple_data((uint8_t[]){0x84, 0x10}, 2);
-          break;
-        case 0x3:
-          send_multiple_data((uint8_t[]){0xFF, 0xFF}, 2);
-          break;
-      }
+  for (uint8_t i = 0; i < LCD_HEIGHT; i++) {
+    for (uint8_t j = 0; j < LCD_WIDTH; j++) {
+      uint8_t color = framebuffer[i][j] & 0x3;
+      line_buffer[j * 2 + 0] = palette[color][0];
+      line_buffer[j * 2 + 1] = palette[color][1];
+    }
+    send_multiple_data(line_buffer, LCD_WIDTH * 2);
+  }
 }
 
 void emulator_init() {
-  enum gb_init_error_e err = gb_init(&gb, &gb_rom_read, NULL, NULL, &gb_error, NULL);
+  enum gb_init_error_e err =
+      gb_init(&gb, &gb_rom_read, NULL, NULL, &gb_error, NULL);
 
   if (err != GB_INIT_NO_ERROR) {
     uart2_println("Failed to init GB emulator!");
@@ -65,7 +68,7 @@ void emulator_init() {
       uart2_println("GB_INIT_INVALID_CHECKSUM");
     else
       uart2_println("GB_INIT_INVALID_MAX");
-    
+
     return;
   }
   gb_init_lcd(&gb, &lcd_draw_line);

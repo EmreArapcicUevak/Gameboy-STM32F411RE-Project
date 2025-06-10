@@ -13,11 +13,11 @@ int main(){
   uint16_t batteryValues[2];
 
   uart2_init(115200);
-  uart2_println("Programm started");
+  uart2_println("Program started");
 
   init_wait_timer();
   init_display();
-  init_speaker();
+  //init_speaker();
   init_buttons();
   
   init_battery_ADC(batteryValues, batteryValues + 1);
@@ -30,10 +30,6 @@ int main(){
   for (unsigned int i = 0; i < 240*320; i++)
     send_multiple_data((uint8_t []) {0xFF, 0xFF}, 2);
 
-  /*set_address_window(50, 50, 210, 194);
-  start_memory_write();
-  for (unsigned int i = 0; i < 144 * 160; i++)
-    send_multiple_data((uint8_t[]){0xFF, 0x00}, 2);*/
   uart2_println("Starting emulator");
   emulator_init();
   emulator_run();
