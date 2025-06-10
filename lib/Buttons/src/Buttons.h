@@ -58,6 +58,10 @@ static void init_buttons(void) { // call to init buttons
                         EXTI_FTSR_TR10 | EXTI_FTSR_TR11 | EXTI_FTSR_TR12 |
                         EXTI_FTSR_TR13 | EXTI_FTSR_TR3); // Falling edge trigger for PA5, PA6, PA7, PC10 to PC15, and PB3
 
+    EXTI->RTSR |= (EXTI_RTSR_TR5 | EXTI_RTSR_TR6 | EXTI_RTSR_TR7 | 
+                        EXTI_RTSR_TR10 | EXTI_RTSR_TR11 | EXTI_RTSR_TR12 |
+                        EXTI_RTSR_TR13 | EXTI_RTSR_TR3); // Rising edge trigger for PA5, PA6, PA7, PC10 to PC15, and PB3
+
     NVIC_EnableIRQ(EXTI3_IRQn); // Enable EXTI3 interrupt
     NVIC_EnableIRQ(EXTI9_5_IRQn); // Enable EXTI5 to EXTI9 interrupts
     NVIC_EnableIRQ(EXTI15_10_IRQn); // Enable EXTI10 interrupt
