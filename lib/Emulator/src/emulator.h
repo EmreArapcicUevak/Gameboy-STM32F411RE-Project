@@ -71,7 +71,13 @@ void emulator_init() {
 
     return;
   }
+
+  gb_set_bootrom(&gb, gb_bootrom_read);
+
   gb_init_lcd(&gb, &lcd_draw_line);
+  gb.direct.frame_skip = true;
+
+  gb_reset(&gb);
 }
 
 void emulator_run() {
