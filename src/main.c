@@ -6,6 +6,7 @@
 #include <SD_Card.h>
 #include <Battery.h>
 #include <Buttons.h>
+#include <emulator.h>
 
 // Built-in LED PA5
 int main(){
@@ -27,26 +28,15 @@ int main(){
   start_memory_write();
 
   for (unsigned int i = 0; i < 240*320; i++)
-    send_multiple_data((uint8_t []) {0xF8, 0x00}, 2);
+    send_multiple_data((uint8_t []) {0xFF, 0xFF}, 2);
 
-  set_address_window(319/2 - 10,239/2 - 50,319/2 + 10, 239/2 + 50);
+  /*set_address_window(50, 50, 210, 194);
   start_memory_write();
-  for (unsigned int i = 0; i < 320*20; i++)
-    send_multiple_data((uint8_t []) {0xFF, 0xFF}, 2); 
-
-
-  set_address_window(319/2 - 50,239/2 - 10,319/2 + 50,239/2 + 10);
-  start_memory_write();
-
-  for (unsigned int i = 0; i < 320*20; i++)
-    send_multiple_data((uint8_t []) {0xFF, 0xFF}, 2); 
-  
-    
-  uart2_println("Starting main loop");
-  while (1) {
-    //uart2_println("This is from the main loop");
-    wait(500);
-  }
+  for (unsigned int i = 0; i < 144 * 160; i++)
+    send_multiple_data((uint8_t[]){0xFF, 0x00}, 2);*/
+  uart2_println("Starting emulator");
+  emulator_init();
+  emulator_run();
 
   return 0;
 }
