@@ -4,6 +4,10 @@ This project is an attempt to build a complete Nintendo Game Boy emulator runnin
 It is written in **C**, uses **PlatformIO** for building/flashing, and runs **bare-metal** (without HAL or CubeMX) using direct register access.
 
 ![Logo](Images/gameboy_nitendo_logo.jpeg)
+
+## 🎮 Demo Video
+[https://github.com/EmreArapcicUevak/Gameboy-STM32F411RE-Project/issues/1](https://github.com/user-attachments/assets/04ac2201-e284-4587-832b-47be5e55016f)
+
 ---
 
 ## Project Status
@@ -89,8 +93,8 @@ already good portions of the codes written out.
 
 > **Note:** There is a conflict between the SD card and the buttons **A**, **B**, and **START** because the SD card is still a work in progress and wasn't fully integrated yet.
 
-![Wiring Front](Images/wiring_front.jpeg)
-![Wiring Back](Images/wiring_back.jpeg)
+![Wiring Front](Images/Wiring_Front.jpeg)
+![Wiring Back](Images/Wiring_Back.jpeg)
 
 ---
 
